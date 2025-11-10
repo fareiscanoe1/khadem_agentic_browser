@@ -1,0 +1,12 @@
+# Copyright Khadem Authors
+# Custom New Tab Extension Build Configuration
+
+group("custom_newtab") {
+  data = [
+    "manifest.json",
+    "newtab.html",
+    "newtab.js",
+  ]
+}
+
+

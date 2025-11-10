@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Tab - Khadem</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      overflow: hidden;
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Dynamic Background */
+    #wallpaper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      transition: opacity 0.5s;
+    }
+
+    #wallpaper-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(0px);
+      z-index: 0;
+      transition: all 0.3s;
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 40px;
+      color: white;
+    }
+
+    /* Clock */
+    .clock {
+      font-size: 120px;
+      font-weight: 200;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    .date {
+      font-size: 24px;
+      font-weight: 300;
+      opacity: 0.9;
+      margin-bottom: 60px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Search Box */
+    .search-container {
+      width: 100%;
+      max-width: 700px;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 20px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      color: white;
+      outline: none;
+      transition: all 0.3s;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-box::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .search-box:focus {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Quick Links */
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 120px));
+      gap: 24px;
+      margin-bottom: 40px;
+      animation: fadeIn 1.2s ease-in;
+    }
+
+    .quick-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .quick-link:hover {
+      transform: translateY(-8px);
+    }
+
+    .quick-link-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
+    }
+
+    .quick-link:hover .quick-link-icon {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .quick-link-name {
+      font-size: 14px;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      font-weight: 500;
+    }
+
+    /* Settings Button */
+    .settings-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+
+    .settings-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    /* Settings Modal */
+    .settings-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .settings-modal.active {
+      display: flex;
+    }
+
+    .settings-content {
+      background: rgba(30, 30, 30, 0.95);
+      backdrop-filter: blur(40px);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .settings-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .settings-section {
+      margin-bottom: 32px;
+    }
+
+    .settings-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    /* Wallpaper Gallery */
+    .wallpaper-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .wallpaper-option {
+      aspect-ratio: 16/9;
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .wallpaper-option:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .wallpaper-option.active {
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .wallpaper-label {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: white;
+      text-align: center;
+    }
+
+    .custom-wallpaper-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .custom-wallpaper-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background -->
+  <img id="wallpaper" src="" alt="Background">
+  <div id="wallpaper-overlay"></div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Clock -->
+    <div class="clock" id="clock">12:00</div>
+    <div class="date" id="date">Monday, January 1</div>
+
+    <!-- Search -->
+    <div class="search-container">
+      <input type="text" class="search-box" id="searchBox" placeholder="Search the web or enter URL...">
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links" id="quickLinks">
+      <!-- Dynamically generated -->
+    </div>
+  </div>
+
+  <!-- Settings Button -->
+  <button class="settings-btn" id="settingsBtn">⚙️</button>
+
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settingsModal">
+    <div class="settings-content">
+      <div class="settings-header">
+        <div class="settings-title">🎨 Customize Your New Tab</div>
+        <button class="close-btn" id="closeBtn">×</button>
+      </div>
+
+      <!-- Wallpaper Section -->
+      <div class="settings-section">
+        <div class="settings-section-title">Background Wallpaper</div>
+        <div class="wallpaper-gallery" id="wallpaperGallery">
+          <!-- Dynamically generated -->
+        </div>
+        <input 
+          type="text" 
+          class="custom-wallpaper-input" 
+          id="customWallpaperInput" 
+          placeholder="Or paste your own image URL..."
+        >
+      </div>
+    </div>
+  </div>
+
+  <script src="newtab.js"></script>
+</body>
+</html>
+
+

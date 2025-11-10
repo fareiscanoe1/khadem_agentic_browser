@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Khadem Custom New Tab",
+  "version": "1.0.0",
+  "description": "Beautiful customizable new tab with wallpapers, quick links, and widgets",
+  "permissions": [
+    "storage",
+    "topSites",
+    "bookmarks"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
+}
+
+

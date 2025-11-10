@@ -1,0 +1,72 @@
+diff --git a/chrome/browser/khadem_server/BUILD.gn b/chrome/browser/khadem_server/BUILD.gn
+new file mode 100644
+index 0000000000000..ddbdf0b78c0a3
+--- /dev/null
++++ b/chrome/browser/khadem_server/BUILD.gn
+@@ -0,0 +1,66 @@
++# Copyright 2024 The Chromium Authors
++# Use of this source code is governed by a BSD-style license that can be
++# found in the LICENSE file.
++
++import("//build/config/chrome_build.gni")
++
++# Validate that required resources exist at build time
++# GN will fail at generation time if resources/bin/khadem_server is missing
++_khadem_binary_name = "khadem_server"
++if (is_win) {
++  _khadem_binary_name += ".exe"
++}
++
++action("validate_khadem_resources") {
++  script = "validate_resources.py"
++  inputs = [ "resources/bin/${_khadem_binary_name}" ]
++  outputs = [ "$target_gen_dir/khadem_resources_validated" ]
++}
++
++source_set("khadem_server") {
++  sources = [
++    "khadem_server_manager.cc",
++    "khadem_server_manager.h",
++    "khadem_server_prefs.cc",
++    "khadem_server_prefs.h",
++  ]
++
++  deps = [
++    "//base",
++    "//chrome/browser:browser_process",
++    "//chrome/common",
++    "//components/prefs",
++    "//content/public/browser",
++    "//net",
++  ]
++}
++
++if (is_mac) {
++  import("//build/config/apple/symbols.gni")
++  import("//build/config/mac/mac_sdk.gni")
++
++  # Bundle data for macOS - recursively packages resources/ to Resources/KhademServer/default/
++  bundle_data("khadem_resources_bundle") {
++    sources = [ "resources" ]
++    outputs = [ "{{bundle_resources_dir}}/KhademServer/default/{{source_file_part}}" ]
++    # TODO: Re-enable validation when resources/bin/khadem_server is available
++    # deps = [ ":validate_khadem_resources" ]
++  }
++} else {
++  # Copy for Windows/Linux - recursively packages resources/ to <exe_dir>/KhademServer/default/
++  copy("khadem_resources_copy") {
++    sources = [ "resources" ]
++    outputs = [ "$root_out_dir/KhademServer/default/{{source_file_part}}" ]
++    # TODO: Re-enable validation when resources/bin/khadem_server is available
++    # deps = [ ":validate_khadem_resources" ]
++  }
++}
++
++# Group for all Khadem server resources
++group("khadem_server_resources") {
++  if (is_mac) {
++    deps = [ ":khadem_resources_bundle" ]
++  } else {
++    deps = [ ":khadem_resources_copy" ]
++  }
++}

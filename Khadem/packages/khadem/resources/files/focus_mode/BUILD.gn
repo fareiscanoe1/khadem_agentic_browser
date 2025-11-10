@@ -1,0 +1,14 @@
+# Copyright Khadem Authors
+# Focus Mode Extension Build Configuration
+
+group("focus_mode") {
+  data = [
+    "manifest.json",
+    "background.js",
+    "popup.html",
+    "popup.js",
+    "blocked.html",
+  ]
+}
+
+

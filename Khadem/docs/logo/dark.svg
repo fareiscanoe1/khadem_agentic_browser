@@ -1,0 +1,9 @@
+<svg width="800" height="200" viewBox="0 0 800 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- K icon -->
+  <path d="M40 50 L40 150 L55 150 L55 100 L90 150 L110 150 L70 95 L105 50 L85 50 L55 90 L55 50 Z" fill="#60A5FA"/>
+  <circle cx="100" cy="70" r="8" fill="#93C5FD"/>
+  <circle cx="100" cy="130" r="8" fill="#93C5FD"/>
+  
+  <!-- Khadem text -->
+  <text x="150" y="120" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#F9FAFB">Khadem</text>
+</svg>

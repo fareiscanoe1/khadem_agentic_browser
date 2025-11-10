@@ -1,0 +1,16 @@
+# Copyright Khadem Authors
+# AdBlocker Extension Build Configuration
+
+group("khadem_adblocker") {
+  data = [
+    "manifest.json",
+    "background.js",
+    "content.js",
+    "youtube.js",
+    "popup.html",
+    "popup.js",
+    "rules.json",
+  ]
+}
+
+
